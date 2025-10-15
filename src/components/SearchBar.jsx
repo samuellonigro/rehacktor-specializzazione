@@ -1,37 +1,53 @@
-// src/components/SearchBar.jsx
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
-export default function SearchBar() {
+export default function SearchBar({ onSearch }) {
   const [query, setQuery] = useState("");
-  const navigate = useNavigate();
+  const [genres, setGenres] = useState([]);
+  const [selectedGenre, setSelectedGenre] = useState("");
+
+  useEffect(() => {
+    const apiKey = import.meta.env.VITE_RAWG_API_KEY;
+    const fetchGenres = async () => {
+      try {
+        const res = await fetch(`https://api.rawg.io/api/genres?key=${apiKey}`);
+        const data = await res.json();
+        setGenres(data.results || []);
+      } catch (err) {
+        console.error("Errore fetching genres", err);
+      }
+    };
+    fetchGenres();
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (query.trim()) {
-      navigate(`/search?query=${encodeURIComponent(query.trim())}`);
-      setQuery("");
-    }
+    onSearch({ query: query.trim(), genre: selectedGenre });
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col sm:flex-row items-center gap-3 mb-8 justify-center"
-    >
+    <form onSubmit={handleSubmit} className="flex flex-col md:flex-row items-center gap-3 mb-6">
       <input
         type="text"
+        placeholder="Cerca un gioco..."
+        className="w-full md:flex-1 bg-gray-800 text-white rounded-xl px-4 py-2 focus:outline-none"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Cerca un gioco..."
-        className="w-full sm:w-80 px-4 py-2 rounded-lg bg-gray-800 text-gray-100 placeholder-gray-400
-                   focus:outline-none focus:ring-2 focus:ring-sky-500"
       />
-      <button
-        type="submit"
-        className="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-lg transition"
+
+      <select 
+        value={selectedGenre} 
+        onChange={(e) => setSelectedGenre(e.target.value)} 
+        className="bg-gray-800 text-white rounded-xl px-3 py-2"
       >
-        Cerca
+        <option value="">Tutti i generi</option>
+        {genres.map(g => <option key={g.id} value={g.slug}>{g.name}</option>)}
+      </select>
+
+      <button 
+        type="submit" 
+        className="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-xl font-semibold"
+      >
+        Filtra
       </button>
     </form>
   );

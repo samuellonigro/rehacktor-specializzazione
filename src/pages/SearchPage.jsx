@@ -5,15 +5,21 @@ import Card from "../components/Card";
 export default function SearchPage() {
   const [searchParams] = useSearchParams();
   const query = searchParams.get("query");
+  const genre = searchParams.get("genre"); // filtro per genere
 
-  // 👉 Costruiamo l’URL API solo se la query esiste
-  const url = query
-    ? `https://api.rawg.io/api/games?key=9269195f491e44539d7a2d10ce87ab15&search=${encodeURIComponent(
-        query
-      )}`
+  const apiKey = import.meta.env.VITE_RAWG_API_KEY || "9269195f491e44539d7a2d10ce87ab15";
+
+  // Costruzione URL API solo con query e genere
+  let url = query
+    ? `https://api.rawg.io/api/games?key=${apiKey}&search=${encodeURIComponent(query)}`
     : null;
 
+  if (genre) {
+    url += `&genres=${encodeURIComponent(genre)}`;
+  }
+
   const { data, loading, error } = useFetch(url);
+  const results = data?.results || [];
 
   if (!query) {
     return (
@@ -39,11 +45,9 @@ export default function SearchPage() {
     );
   }
 
-  const results = data?.results || [];
-
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold text-center mb-6">
+      <h1 className="text-3xl font-bold text-center mb-6 text-white">
         Risultati per: <span className="text-sky-400">{query}</span>
       </h1>
 

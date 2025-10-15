@@ -96,34 +96,34 @@ export default function AccountPage() {
       {/* Form profilo */}
       <div className="space-y-4">
         <div>
-          <label>Nome</label>
+          <label className="text-sm text-gray-300">Nome</label>
           <input
             name="first_name"
             value={userData.first_name}
             onChange={handleChange}
-            className="w-full p-2 rounded bg-gray-900"
+            className="w-full p-2 rounded bg-gray-900 focus:outline-none focus:ring-2 focus:ring-sky-500"
           />
         </div>
         <div>
-          <label>Cognome</label>
+          <label className="text-sm text-gray-300">Cognome</label>
           <input
             name="last_name"
             value={userData.last_name}
             onChange={handleChange}
-            className="w-full p-2 rounded bg-gray-900"
+            className="w-full p-2 rounded bg-gray-900 focus:outline-none focus:ring-2 focus:ring-sky-500"
           />
         </div>
         <div>
-          <label>Username</label>
+          <label className="text-sm text-gray-300">Username</label>
           <input
             name="username"
             value={userData.username}
             onChange={handleChange}
-            className="w-full p-2 rounded bg-gray-900"
+            className="w-full p-2 rounded bg-gray-900 focus:outline-none focus:ring-2 focus:ring-sky-500"
           />
         </div>
         <div>
-          <label>Email (non modificabile)</label>
+          <label className="text-sm text-gray-400">Email (non modificabile)</label>
           <input
             name="email"
             value={userData.email}
@@ -136,12 +136,12 @@ export default function AccountPage() {
       <button
         onClick={handleSave}
         disabled={loading}
-        className="w-full py-2 bg-sky-600 hover:bg-sky-700 rounded font-semibold"
+        className="w-full py-2 bg-sky-600 hover:bg-sky-700 rounded font-semibold transition-colors"
       >
         {loading ? "Salvando..." : "Salva modifiche"}
       </button>
 
-      {/* Lista dei giochi favoriti */}
+      {/* Lista giochi preferiti */}
       <div className="mt-8">
         <h2 className="text-xl font-bold mb-4">I tuoi giochi preferiti</h2>
         {favorites.length === 0 ? (
@@ -151,9 +151,9 @@ export default function AccountPage() {
             {favorites.map((fav) => (
               <div
                 key={fav.id}
-                className="flex items-center bg-gray-900 p-2 rounded justify-between"
+                className="flex items-center bg-gray-900 p-2 rounded justify-between shadow-sm hover:shadow-md transition-shadow"
               >
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-3">
                   {fav.game_image && (
                     <img
                       src={fav.game_image}
@@ -161,10 +161,13 @@ export default function AccountPage() {
                       className="w-12 h-12 rounded object-cover"
                     />
                   )}
-                  <span>{fav.game_name}</span>
+                  <span className="font-medium truncate">{fav.game_name}</span>
                 </div>
-                {/* Bottone per rimuovere dai favoriti */}
-                <ToggleFavorite game={{ id: fav.game_id, name: fav.game_name, background_image: fav.game_image }} />
+                {/* Bottone rimuovi */}
+                <ToggleFavorite
+                  game={{ id: fav.game_id, name: fav.game_name, background_image: fav.game_image }}
+                  compact
+                />
               </div>
             ))}
           </div>
